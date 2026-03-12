@@ -1,6 +1,6 @@
 // Definisikan variabel di bagian atas
 :root {
-  --sidebar-slim-width: 70px;
+  --sidebar-slim-width: 110px;
   --sidebar-full-width: 240px;
 }
 
@@ -50,7 +50,7 @@ body.sidebar-collapsed .main-outlet-wrapper {
 
 // Tampilan Sidebar Umum
 .sidebar-wrapper {
-  background-color: #ffffff;
+  background-color: #ec0000;
   border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
