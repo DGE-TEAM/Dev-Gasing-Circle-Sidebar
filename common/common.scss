@@ -1,107 +1,211 @@
 // ============================================
-// GC Sidebar - Custom Styling
+// GC Sidebar Theme Component
+// Target Discourse v3.1+
 // ============================================
 
+// ---- 1. SEMBUNYIKAN SEMUA SECTION DEFAULT DISCOURSE ----
+// Ini menyembunyikan: Topics, My Posts, Categories, Channels, dll
+.sidebar-section[data-section-name="community"],
+.sidebar-section[data-section-name="categories"],
+.sidebar-section[data-section-name="tags"],
+.sidebar-section[data-section-name="chat-channels"],
+.sidebar-section[data-section-name="chat-dms"],
+.sidebar-section[data-section-name="messages"] {
+  display: none !important;
+}
+
+// ---- 2. VARIABEL ----
 :root {
-  --gc-sidebar-width: 240px;
-  --gc-sidebar-collapsed-width: 70px;
-  --gc-active-color: #2b59ff;
-  --gc-active-bg: #eef2ff;
+  --gc-sidebar-full: 240px;
+  --gc-sidebar-slim: 70px;
+  --gc-blue: #2B59FF;
+  --gc-active-bg: rgba(43, 89, 255, 0.08);
+  --gc-hover-bg: rgba(0, 0, 0, 0.04);
+  --gc-border: rgba(0, 0, 0, 0.08);
+  --gc-text: #333333;
+  --gc-text-muted: #6C757D;
 }
 
-// ---- Sidebar Container ----
+// ---- 3. SIDEBAR CONTAINER ----
 .sidebar-wrapper {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: var(--gc-sidebar-full) !important;
+  min-width: var(--gc-sidebar-full) !important;
+  transition: width 0.25s ease, min-width 0.25s ease;
   overflow: hidden;
-  width: var(--gc-sidebar-width);
-  border-right: 1px solid var(--primary-low);
+  border-right: 1px solid var(--gc-border);
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
 }
 
-// ---- State: Collapsed ----
-body.gc-sidebar-collapsed .sidebar-wrapper {
-  width: var(--gc-sidebar-collapsed-width);
+// ---- 4. LOGO / HEADER AREA ----
+// Styling area logo GC di atas sidebar
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gc-border);
+  min-height: 56px;
 
-  // Sembunyikan semua teks label
-  .sidebar-section-link-label,
-  .sidebar-section-header-text,
-  .sidebar-section-header-button,
-  .sidebar-footer-container .btn span {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
-    white-space: nowrap;
+  .gc-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gc-text);
+
+    .gc-logo-box {
+      width: 36px;
+      height: 36px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Tombol toggle <
+.gc-toggle-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--gc-border);
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+
+  &:hover {
+    background: var(--gc-hover-bg);
   }
 
-  // Center icon saat collapsed
-  .sidebar-section-link-content-text {
+  svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+    fill: none;
+    stroke: var(--gc-text);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// ---- 5. NAV LINKS STYLING ----
+.sidebar-section[data-section-name="gc-main-nav"] {
+  padding: 8px 8px;
+
+  // Hilangkan header section (judul kosong)
+  .sidebar-section-header {
     display: none;
+  }
+
+  .sidebar-section-link-wrapper {
+    border-radius: 8px;
+    margin-bottom: 2px;
+    overflow: hidden;
+
+    &:hover .sidebar-section-link {
+      background: var(--gc-hover-bg);
+    }
+
+    // Active state
+    &.active .sidebar-section-link {
+      background: var(--gc-active-bg) !important;
+      color: var(--gc-blue) !important;
+
+      .sidebar-section-link-prefix .d-icon {
+        color: var(--gc-blue) !important;
+      }
+
+      .sidebar-section-link-content-text {
+        color: var(--gc-blue) !important;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .sidebar-section-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: var(--gc-text);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.15s;
+    border: none;
+    background: transparent;
+    width: 100%;
+
+    .sidebar-section-link-prefix .d-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--gc-text-muted);
+    }
+
+    .sidebar-section-link-content-text {
+      font-size: 14px;
+      color: var(--gc-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// ---- 6. FOOTER (User Profile) ----
+.sidebar-footer-wrapper,
+.sidebar-footer-container {
+  margin-top: auto;
+  border-top: 1px solid var(--gc-border);
+  padding: 8px;
+}
+
+// ---- 7. COLLAPSED STATE ----
+body.gc-collapsed {
+  .sidebar-wrapper {
+    width: var(--gc-sidebar-slim) !important;
+    min-width: var(--gc-sidebar-slim) !important;
+  }
+
+  .gc-logo-text,
+  .sidebar-section-link-content-text,
+  .sidebar-footer-container .btn span,
+  .sidebar-section-header-text {
+    display: none !important;
+    width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .gc-toggle-btn svg {
+    transform: rotate(180deg);
   }
 
   .sidebar-section-link {
     justify-content: center;
-    padding: 0.5rem;
-  }
-}
+    padding: 9px !important;
 
-// ---- Tombol Toggle (ditempatkan di header sidebar) ----
-.gc-sidebar-toggle-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1px solid var(--primary-low);
-  background: var(--secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: var(--primary-low);
+    .sidebar-section-link-prefix {
+      margin: 0 !important;
+    }
   }
 
-  .d-icon {
-    width: 12px;
-    height: 12px;
-    transition: transform 0.3s ease;
+  // Sembunyikan logo text
+  .gc-logo-area span {
+    display: none;
   }
-}
-
-// Rotasi icon chevron saat collapsed
-body.gc-sidebar-collapsed .gc-sidebar-toggle-btn .d-icon {
-  transform: rotate(180deg);
-}
-
-// ---- Sidebar Header (Logo area) ----
-.sidebar-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--primary-low);
-  gap: 0.5rem;
-}
-
-// ---- Active Link Styling ----
-.sidebar-section-link-wrapper.active .sidebar-section-link,
-.sidebar-section-link-wrapper .sidebar-section-link.active {
-  background: var(--gc-active-bg);
-  color: var(--gc-active-color);
-  border-radius: 8px;
-  font-weight: 600;
-
-  .d-icon {
-    color: var(--gc-active-color);
-  }
-}
-
-// ---- Footer / User Profile ----
-.sidebar-footer-wrapper {
-  border-top: 1px solid var(--primary-low);
-  padding: 0.5rem;
 }
