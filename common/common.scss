@@ -1,0 +1,226 @@
+// ============================================
+// GC Sidebar Theme Component
+// Target Discourse v3.1+
+// ============================================
+
+// ---- 1. SEMBUNYIKAN SEMUA SECTION DEFAULT DISCOURSE ----
+// Ini menyembunyikan: Topics, My Posts, Categories, Channels, dll
+// .d-header {
+//   display: none !important;
+// }
+// body {
+//   padding-top: 0 !important;
+// }
+// #main-outlet-wrapper {
+//   padding-top: 0 !important;
+// }
+
+// // Sembunyikan tombol toggle bawaan Discourse
+// .sidebar-toggle-button,
+// .btn-sidebar-toggle {
+//   display: none !important;
+// }
+
+// // Paksa sidebar selalu terbuka
+// .has-sidebar-page .sidebar-wrapper {
+//   transform: none !important;
+//   width: var(--gc-sidebar-full) !important;
+// }
+
+// ---- 2. VARIABEL ----
+:root {
+  --gc-sidebar-full: 240px;
+  --gc-sidebar-slim: 70px;
+  --gc-blue: #2b59ff;
+  --gc-active-bg: rgba(43, 89, 255, 0.08);
+  --gc-hover-bg: rgba(0, 0, 0, 0.04);
+  --gc-border: rgba(0, 0, 0, 0.08);
+  --gc-text: #333333;
+  --gc-text-muted: #6c757d;
+}
+
+// ---- 3. SIDEBAR CONTAINER ----
+.sidebar-wrapper {
+  width: var(--gc-sidebar-full) !important;
+  min-width: var(--gc-sidebar-full) !important;
+  transition:
+    width 0.25s ease,
+    min-width 0.25s ease;
+  overflow: hidden;
+  border-right: 1px solid var(--gc-border);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+// ---- 4. LOGO / HEADER AREA ----
+// Styling area logo GC di atas sidebar
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gc-border);
+  min-height: 56px;
+
+  .gc-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--gc-text);
+
+    .gc-logo-box {
+      width: 36px;
+      height: 36px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Tombol toggle <
+.gc-toggle-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--gc-border);
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+
+  &:hover {
+    background: var(--gc-hover-bg);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.25s ease;
+    fill: none;
+    stroke: var(--gc-text);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// ---- 5. NAV LINKS STYLING ----
+.sidebar-section[data-section-name="gc-main-nav"] {
+  padding: 8px 8px;
+
+  // Hilangkan header section (judul kosong)
+  .sidebar-section-header {
+    display: none;
+  }
+
+  .sidebar-section-link-wrapper {
+    border-radius: 8px;
+    margin-bottom: 2px;
+    overflow: hidden;
+
+    &:hover .sidebar-section-link {
+      background: var(--gc-hover-bg);
+    }
+
+    // Active state
+    &.active .sidebar-section-link {
+      background: var(--gc-active-bg) !important;
+      color: var(--gc-blue) !important;
+
+      .sidebar-section-link-prefix .d-icon {
+        color: var(--gc-blue) !important;
+      }
+
+      .sidebar-section-link-content-text {
+        color: var(--gc-blue) !important;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .sidebar-section-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: var(--gc-text);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.15s;
+    border: none;
+    background: transparent;
+    width: 100%;
+
+    .sidebar-section-link-prefix .d-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--gc-text-muted);
+    }
+
+    .sidebar-section-link-content-text {
+      font-size: 14px;
+      color: var(--gc-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// ---- 6. FOOTER (User Profile) ----
+.sidebar-footer-wrapper,
+.sidebar-footer-container {
+  margin-top: auto;
+  border-top: 1px solid var(--gc-border);
+  padding: 8px;
+}
+
+// ---- 7. COLLAPSED STATE ----
+body.gc-collapsed {
+  .sidebar-wrapper {
+    width: var(--gc-sidebar-slim) !important;
+    min-width: var(--gc-sidebar-slim) !important;
+  }
+
+  .gc-logo-text,
+  .sidebar-section-link-content-text,
+  .sidebar-footer-container .btn span,
+  .sidebar-section-header-text {
+    display: none !important;
+    width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .gc-toggle-btn svg {
+    transform: rotate(180deg);
+  }
+
+  .sidebar-section-link {
+    justify-content: center;
+    padding: 9px !important;
+
+    .sidebar-section-link-prefix {
+      margin: 0 !important;
+    }
+  }
+
+  // Sembunyikan logo text
+  .gc-logo-area span {
+    display: none;
+  }
+}
