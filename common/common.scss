@@ -4,28 +4,28 @@
 // ============================================
 
 // ---- 1. SEMBUNYIKAN SEMUA SECTION DEFAULT DISCOURSE ----
-// Ini menyembunyikan: Topics, My Posts, Categories, Channels, dll
-// .d-header {
-//   display: none !important;
-// }
-// body {
-//   padding-top: 0 !important;
-// }
-// #main-outlet-wrapper {
-//   padding-top: 0 !important;
-// }
+// Ini menyembunyikan: Header, button sidebar
+.d-header {
+  display: none !important;
+}
+body {
+  padding-top: 0 !important;
+}
+#main-outlet-wrapper {
+  padding-top: 0 !important;
+}
 
-// // Sembunyikan tombol toggle bawaan Discourse
-// .sidebar-toggle-button,
-// .btn-sidebar-toggle {
-//   display: none !important;
-// }
+// Sembunyikan tombol toggle bawaan Discourse
+.sidebar-toggle-button,
+.btn-sidebar-toggle {
+  display: none !important;
+}
 
-// // Paksa sidebar selalu terbuka
-// .has-sidebar-page .sidebar-wrapper {
-//   transform: none !important;
-//   width: var(--gc-sidebar-full) !important;
-// }
+// Paksa sidebar selalu terbuka
+.has-sidebar-page .sidebar-wrapper {
+  transform: none !important;
+  width: var(--gc-sidebar-full) !important;
+}
 
 // ---- 2. VARIABEL ----
 :root {
