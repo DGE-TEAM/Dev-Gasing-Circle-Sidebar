@@ -11,8 +11,14 @@
 body {
   padding-top: 0 !important;
 }
+body.has-sidebar-page #main-outlet-wrapper {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
 #main-outlet-wrapper {
   padding-top: 0 !important;
+  margin-left: 0 !important;
 }
 
 // Sembunyikan tombol toggle bawaan Discourse
@@ -41,6 +47,10 @@ body {
 
 // ---- 3. SIDEBAR CONTAINER ----
 .sidebar-wrapper {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  top: 0 !important;
+  height: 100vh !important;
   width: var(--gc-sidebar-full) !important;
   min-width: var(--gc-sidebar-full) !important;
   transition:
