@@ -3,153 +3,72 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 export default {
   name: "gasing-sidebar-init",
   initialize() {
-    withPluginApi("1.6.0", (api) => {
-      // ================================================
-      // STEP 1: Daftarkan Custom Navigation Section
-      // ================================================
-      api.addSidebarSection(
-        (BaseCustomSidebarSection, BaseCustomSidebarSectionLink) => {
-          // Helper untuk buat link dengan cepat
-          function makeLink(name, text, icon, href) {
-            return class extends BaseCustomSidebarSectionLink {
-              get name() {
-                return name;
-              }
-              get href() {
-                return href;
-              }
-              get title() {
-                return text;
-              }
-              get text() {
-                return text;
-              }
-              get prefixType() {
-                return "icon";
-              }
-              get prefixValue() {
-                return icon;
-              }
-            };
-          }
+    withPluginApi("1.0.0", (api) => {
 
-          const GCHomeLink = makeLink("gc-home", "Home", "house", "/");
-          const GCNewsLink = makeLink(
-            "gc-news",
-            "Gasing Academy News",
-            "newspaper",
-            "/c/news",
-          );
-          const GCKomunitasLink = makeLink(
-            "gc-komunitas",
-            "Komunitas",
-            "users",
-            "/c/komunitas",
-          );
-          const GCKontenLink = makeLink(
-            "gc-konten",
-            "Konten Eksklusif",
-            "star",
-            "/c/konten",
-          );
-          const GCMeetUpLink = makeLink(
-            "gc-meetup",
-            "Virtual Meet-Up",
-            "video",
-            "/c/meetup",
-          );
-          const GCMateriLink = makeLink(
-            "gc-materi",
-            "Materi Gasing",
-            "book",
-            "/c/materi",
-          );
-
-          return class GCMainNavSection extends BaseCustomSidebarSection {
-            get name() {
-              return "gc-main-nav";
-            }
-            get title() {
-              return "";
-            }
-            get text() {
-              return "";
-            }
-            get links() {
-              return [
-                new GCHomeLink(),
-                new GCNewsLink(),
-                new GCKomunitasLink(),
-                new GCKontenLink(),
-                new GCMeetUpLink(),
-                new GCMateriLink(),
-              ];
-            }
-          };
-        },
-      );
-
-      // ================================================
-      // STEP 2: Inject Logo Header + Toggle Button
-      // ================================================
-      const STORAGE_KEY = "gc_sidebar_collapsed";
-
-      function getIsCollapsed() {
-        return localStorage.getItem(STORAGE_KEY) === "true";
-      }
-
-      function applyCollapsedState(collapsed) {
-        document.body.classList.toggle("gc-collapsed", collapsed);
-      }
-
-      function injectSidebarHeader() {
-        // Cegah duplikat
-        if (document.querySelector(".gc-sidebar-header")) return;
-
-        // Cari wrapper paling atas di dalam sidebar
-        const sidebarWrapper = document.querySelector(".sidebar-wrapper");
-        if (!sidebarWrapper) return;
-
-        // Buat elemen header
-        const header = document.createElement("div");
-        header.className = "sidebar-header gc-sidebar-header";
-        header.innerHTML = `
-          <div class="gc-logo-area">
-            <div class="gc-logo-box">GC</div>
-            <span class="gc-logo-text">GC LOGO</span>
-          </div>
-          <button class="gc-toggle-btn" aria-label="Toggle Sidebar">
-            <svg viewBox="0 0 24 24">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-        `;
-
-        // Sisipkan sebagai anak pertama sidebar
-        sidebarWrapper.insertBefore(header, sidebarWrapper.firstChild);
-
-        // Event listener untuk toggle
-        header.querySelector(".gc-toggle-btn").addEventListener("click", () => {
-          const nowCollapsed = !getIsCollapsed();
-          localStorage.setItem(STORAGE_KEY, nowCollapsed);
-          applyCollapsedState(nowCollapsed);
-        });
-      }
-
-      // ================================================
-      // STEP 3: Jalankan saat setiap page change
-      // ================================================
-      api.onPageChange(() => {
-        if (api.getCurrentUser()) {
-          const sidebarState = api.container.lookup("service:sidebar-state");
-          if (sidebarState) {
-            sidebarState.isCollapsed = false;
-          }
+      // ── 1. Matikan sidebar bawaan Discourse ──────────────────────────────
+      // Discourse mengelola sidebar lewat body classes dan inline styles.
+      // Fungsi ini memastikan tidak ada konflik layout dengan sidebar kustom kita.
+      const killDiscourseSidebar = () => {
+        document.body.classList.remove(
+          "has-sidebar-page",
+          "sidebar-animate",
+          "sidebar--visible"
+        );
+        // Bersihkan margin/padding yang mungkin di-inject Discourse
+        const wrap = document.querySelector(".wrap");
+        if (wrap) {
+          wrap.style.removeProperty("padding-left");
+          wrap.style.removeProperty("margin-left");
         }
-        // Inject header dengan sedikit delay agar DOM Discourse sudah siap
-        setTimeout(() => {
-          injectSidebarHeader();
-        }, 100);
+        const outlet = document.querySelector("#main-outlet-wrapper");
+        if (outlet) {
+          outlet.style.removeProperty("padding-left");
+          outlet.style.removeProperty("margin-left");
+        }
+      };
+
+      // ── 2. Sync state collapsed sidebar → body class ─────────────────────
+      // MutationObserver memantau class di .gs-sidebar dan mengupdate
+      // body.gs-collapsed secara reaktif, sehingga CSS padding-left body
+      // ikut berubah saat sidebar di-collapse/expand.
+      let sidebarObserver = null;
+
+      const syncCollapseState = () => {
+        const sidebar = document.querySelector(".gs-sidebar");
+        if (!sidebar) return;
+
+        if (sidebarObserver) {
+          sidebarObserver.disconnect();
+        }
+
+        sidebarObserver = new MutationObserver(() => {
+          const isCollapsed = sidebar.classList.contains("gs-sidebar--collapsed");
+          document.body.classList.toggle("gs-collapsed", isCollapsed);
+          killDiscourseSidebar();
+        });
+
+        sidebarObserver.observe(sidebar, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+
+        // Set state awal
+        const isCollapsed = sidebar.classList.contains("gs-sidebar--collapsed");
+        document.body.classList.toggle("gs-collapsed", isCollapsed);
+      };
+
+      // ── 3. Jalankan setiap kali route berubah (Ember router) ──────────────
+      api.onPageChange(() => {
+        requestAnimationFrame(() => {
+          killDiscourseSidebar();
+          syncCollapseState();
+        });
+      });
+
+      // ── 4. Jalankan sekali saat pertama load ─────────────────────────────
+      requestAnimationFrame(() => {
+        killDiscourseSidebar();
+        syncCollapseState();
       });
     });
   },

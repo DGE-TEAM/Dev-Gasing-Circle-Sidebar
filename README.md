@@ -1,70 +1,136 @@
-Gasing Academy Sidebar Component
+# DGE-GC Sidebar — Merged
 
-Komponen Sidebar kustom untuk platform Gasing Academy yang dirancang menggunakan pendekatan modular. Sidebar ini mendukung navigasi bertingkat, indikator status (badge), dan profil pengguna di bagian bawah.
-🎨 Tampilan Visual
+Theme component Discourse kustom untuk **Gasing Community**.  
+Merupakan hasil merger dari dua versi sebelumnya:
+- `DGE-GC Sidebar` (File 1) — struktur awal dengan multi-initializer
+- `SideBar-Plugin-Custom` (File 2) — arsitektur lebih bersih dengan Glimmer component
 
-Sidebar ini menggunakan skema warna soft gray dengan aksen biru terang pada status aktif, memberikan kesan edukatif dan ramah pengguna.
-✨ Fitur Utama
+---
 
-    Navigation Groups: Pengelompokan menu berdasarkan kategori (Komunitas, Materi Gasing, dll).
+## Fitur
 
-    Collapsible Menus: Menu dropdown untuk kategori dengan banyak sub-item.
+- Sidebar kustom berdiri sendiri (tidak bergantung pada sidebar bawaan Discourse)
+- Collapsible: klik tombol chevron untuk collapse/expand
+- Sub-menu dropdown dengan animasi slide
+- Avatar user real dari Discourse `currentUser` service
+- Mobile responsive — pada layar ≤768px sidebar jadi overlay
+- Logo menggunakan gambar (`gc-logo.jpeg`) dengan fallback teks "GC"
 
-    Active State Indicators: Penanda visual (bar biru di sisi kiri) untuk menu yang sedang diakses.
+---
 
-    Status Badges: Indikator titik biru untuk memberitahu pengguna adanya aktivitas baru pada menu tertentu (misal: Forum atau Challenge).
+## Struktur File
 
-    User Profile Section: Area profil di bagian bawah dengan menu dropdown untuk pengaturan akun.
+```
+DGE-GC-Sidebar-Merged/
+├── about.json
+├── assets/
+│   └── gc-logo.jpeg                          ← logo GC (upload ke Discourse)
+├── common/
+│   └── common.scss                           ← semua CSS sidebar
+└── javascripts/discourse/
+    ├── components/
+    │   ├── gasing-sidebar.js                 ← logika komponen (Glimmer)
+    │   └── gasing-sidebar.hbs                ← template HTML sidebar
+    ├── connectors/below-site-header/
+    │   └── gasing-sidebar-connector.hbs      ← mount point ke DOM Discourse
+    └── initializers/
+        └── gasing-sidebar-init.js            ← integrasi Discourse + collapse sync
+```
 
-🛠️ Struktur Komponen
+---
 
-Komponen ini dibagi menjadi beberapa bagian utama:
-Bagian Deskripsi
-Header Logo GC dan tombol toggle sidebar.
-Main Nav Menu utama seperti 'Home' dan 'Gasing Academy News'.
-Group Nav Menu dengan sub-kategori (menggunakan chevron icon).
-Footer Informasi profil pengguna (Nama & Avatar).
-🚀 Cara Penggunaan
+## Cara Install
 
-1. Instalasi
+### Via Discourse Admin UI
 
-Pastikan Anda memiliki library ikon yang sesuai (seperti Lucide React atau FontAwesome) terpasang di project Anda. 2. Struktur Data (JSON)
+1. Buka **Admin → Customize → Themes**
+2. Klik **Install → From a zip file**
+3. Upload file `DGE-GC-Sidebar-Merged.zip`
+4. Aktifkan theme component dan assign ke theme utama
 
-Gunakan format berikut untuk mengisi item navigasi:
-JSON
+### Via Git (direkomendasikan untuk produksi)
 
-{
-"title": "Komunitas",
-"icon": "UsersIcon",
-"isExpandable": true,
-"children": [
-{ "name": "Forum", "hasUpdate": true },
-{ "name": "Challenge", "hasUpdate": true },
-{ "name": "All Members", "hasUpdate": false }
-]
+1. Buka **Admin → Customize → Themes → Install → From a git repository**
+2. Masukkan URL repository
+
+---
+
+## Cara Upload Logo
+
+Setelah theme terpasang:
+
+1. Masuk ke **Admin → Customize → Themes → DGE-GC Sidebar Merged**
+2. Klik tab **"Upload"** atau **"Assets"**
+3. Upload `gc-logo.jpeg`
+4. Salin URL yang diberikan Discourse (contoh: `/uploads/default/original/1X/abc.jpeg`)
+5. Buka `javascripts/discourse/components/gasing-sidebar.js`
+6. Ubah baris berikut:
+   ```js
+   const GC_LOGO_URL = ""; // ← isi URL logo di sini
+   ```
+
+---
+
+## Cara Ubah Menu Navigasi
+
+Edit konstanta `NAV_ITEMS` di dalam `gasing-sidebar.js`:
+
+```js
+const NAV_ITEMS = [
+  {
+    id: "home",          // ID unik (jangan duplikat)
+    label: "Home",       // Teks yang tampil di sidebar
+    href: "/",           // URL tujuan
+    icon: `<svg .../>`,  // SVG icon (isi dari heroicons.com misalnya)
+  },
+  {
+    id: "komunitas",
+    label: "Komunitas",
+    href: "/c/general",
+    icon: `<svg .../>`,
+    children: [          // Tambahkan "children" untuk membuat sub-menu
+      { id: "forum", label: "Forum", href: "/c/general/forum", dot: true },
+      // dot: true → tampilkan indikator titik biru di kanan label
+    ],
+  },
+];
+```
+
+---
+
+## Cara Ubah Tampilan (CSS Variables)
+
+Edit bagian `:root { ... }` di `common/common.scss`:
+
+```scss
+:root {
+  --gs-width: 220px;              /* lebar sidebar saat expand */
+  --gs-width-collapsed: 64px;     /* lebar sidebar saat collapse */
+  --gs-blue: #2b59ff;             /* warna utama brand GC */
+  --gs-bg: #ffffff;               /* background sidebar */
+  --gs-border: #e5e7eb;           /* warna border */
+  --gs-text: #374151;             /* warna teks utama */
+  --gs-text-muted: #6b7280;       /* warna teks sekunder/icon */
+  --gs-font: "Nunito", sans-serif; /* font sidebar */
+  --gs-shadow: 2px 0 12px rgba(0,0,0,0.06); /* shadow kanan sidebar */
 }
+```
 
-3. Implementasi CSS
+---
 
-Sidebar ini menggunakan variabel warna berikut untuk konsistensi:
+## Minimum Discourse Version
 
-    Background: #F8F9FA
+`3.1.0`
 
-    Active Highlight: #2B59FF (Gasing Blue)
+---
 
-    Text Primary: #333333
+## Changelog
 
-    Text Muted: #6C757D
-
-📂 Lokasi File
-Plaintext
-
-src/
-└── components/
-└── layout/
-├── Sidebar/
-│ ├── Sidebar.tsx # Komponen Utama
-│ ├── SidebarItem.tsx # Sub-komponen baris menu
-│ └── Sidebar.module.css # Styling spesifik sidebar
-
-    Catatan: Pastikan ikon yang digunakan memiliki ukuran standar 20x20px agar tetap sejajar dengan teks menu.
+### Merged version
+- Menggabungkan arsitektur File 1 (DGE-GC) dan File 2 (SideBar-Plugin-Custom)
+- Menghapus duplikasi initializer (dari 3 file menjadi 1)
+- Menambahkan dukungan logo gambar dengan fallback teks
+- Menggunakan warna brand `#2b59ff` dari File 1
+- Mempertahankan arsitektur Glimmer component dari File 2
+- Mempertahankan MutationObserver untuk sync collapse state dari File 2
+- Menambahkan komentar di semua file untuk kemudahan maintenance
