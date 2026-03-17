@@ -1,7 +1,5 @@
 /* ============================================
    GASING SIDEBAR — Merged Theme Component
-   Basis: SideBar-Plugin-Custom (File 2)
-   Tambahan: aset & variabel dari DGE-GC Sidebar (File 1)
    Target: Discourse v3.1+
    ============================================ */
 
@@ -13,7 +11,7 @@
   --gs-border: #e5e7eb;
   --gs-text: #374151;
   --gs-text-muted: #6b7280;
-  --gs-blue: #2b59ff;           /* warna brand GC dari File 1 */
+  --gs-blue: #2b59ff;
   --gs-blue-light: #eaefff;
   --gs-hover: #f3f4f6;
   --gs-active-bg: rgba(43, 89, 255, 0.08);
@@ -184,7 +182,9 @@ body.has-sidebar-page #main-outlet-wrapper,
   text-decoration: none !important;
   font-size: 14px;
   font-weight: 600;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   cursor: pointer;
   border: none;
   background: none;
@@ -276,7 +276,9 @@ body.has-sidebar-page #main-outlet-wrapper,
   font-weight: 500;
   color: var(--gs-text-muted) !important;
   text-decoration: none !important;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   white-space: nowrap;
   overflow: hidden;
 }
