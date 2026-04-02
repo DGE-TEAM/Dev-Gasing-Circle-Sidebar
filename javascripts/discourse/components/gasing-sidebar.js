@@ -3,10 +3,6 @@ import { tracked } from "@glimmer/tracking";
 import { service } from "@ember/service";
 import { action } from "@ember/object";
 
-// ============================================================
-// NAV ITEMS — edit bagian ini untuk mengubah menu sidebar
-// Setiap item bisa punya "children" untuk membuat sub-menu
-// ============================================================
 const NAV_ITEMS = [
   {
     id: "home",
@@ -27,7 +23,12 @@ const NAV_ITEMS = [
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
     children: [
       { id: "forum", label: "Forum", href: "/c/general/forum", dot: true },
-      { id: "challenge", label: "Challenge", href: "/c/general/challenges/", dot: true },
+      {
+        id: "challenge",
+        label: "Challenge",
+        href: "/c/general/challenges/",
+        dot: true,
+      },
       { id: "members", label: "All Members", href: "/c/general/all-members/" },
     ],
   },
@@ -49,26 +50,41 @@ const NAV_ITEMS = [
     href: "/c/gasing-library",
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
     children: [
-      { id: "trainer", label: "Materi Trainer Utama", href: "/c/gasing-library/materi-trainer-utama/" },
-      { id: "permainan", label: "Permainan di Pelatihan", href: "/c/gasing-library/permainan-pelatihan/", dot: true },
-      { id: "musik", label: "Musik Gasing", href: "/c/gasing-library/musik-gasing/" },
-      { id: "minigames", label: "Mini Games", href: "/c/gasing-library/mini-games/" },
-      { id: "thinkplay", label: "Gasing Think & Play", href: "/c/gasing-library/gasing-shop/" },
+      {
+        id: "trainer",
+        label: "Materi Trainer Utama",
+        href: "/c/gasing-library/materi-trainer-utama/",
+      },
+      {
+        id: "permainan",
+        label: "Permainan di Pelatihan",
+        href: "/c/gasing-library/permainan-pelatihan/",
+        dot: true,
+      },
+      {
+        id: "musik",
+        label: "Musik Gasing",
+        href: "/c/gasing-library/musik-gasing/",
+      },
+      {
+        id: "minigames",
+        label: "Mini Games",
+        href: "/c/gasing-library/mini-games/",
+      },
+      {
+        id: "thinkplay",
+        label: "Gasing Think & Play",
+        href: "/c/gasing-library/gasing-shop/",
+      },
     ],
   },
 ];
 
-// ============================================================
-// URL logo — Discourse theme upload menghasilkan URL seperti ini.
-// Setelah upload gc-logo.jpeg via Customize > Theme > Assets,
-// ganti nilai GC_LOGO_URL dengan URL yang diberikan Discourse.
-// Contoh: "/uploads/default/original/1X/abc123.jpeg"
-// Jika dikosongkan (""), sidebar akan fallback ke teks "GC".
-// ============================================================
 const GC_LOGO_URL = "";
 
 export default class GasingSidebar extends Component {
   @service currentUser;
+  // ✅ NEW: inject Ember's router service so we can read currentRouteName reactively
   @service router;
 
   @tracked collapsed = false;
@@ -76,16 +92,23 @@ export default class GasingSidebar extends Component {
 
   constructor() {
     super(...arguments);
-    // Buka group yang anaknya cocok dengan URL saat ini
     const path = window.location.pathname;
     NAV_ITEMS.forEach((item) => {
       if (item.children) {
         const match = item.children.some(
-          (c) => c.href && path.startsWith(c.href)
+          (c) => c.href && path.startsWith(c.href),
         );
         if (match) this.openGroups.add(item.id);
       }
     });
+  }
+
+  // ✅ NEW: returns true when the user is anywhere inside /admin
+  // router.currentRouteName is a tracked property — Glimmer will
+  // automatically re-render the template whenever the route changes.
+  get isAdminRoute() {
+    const routeName = this.router.currentRouteName || "";
+    return routeName.startsWith("admin");
   }
 
   get navItems() {

@@ -4,17 +4,24 @@ export default {
   name: "gasing-sidebar-init",
   initialize() {
     withPluginApi("1.0.0", (api) => {
+      // ✅ Helper: is the current Ember route an admin route?
+      const isAdminRoute = () => {
+        // api.container gives us access to any Ember service by name
+        const router = api.container.lookup("service:router");
+        const routeName = router?.currentRouteName || "";
+        return routeName.startsWith("admin");
+      };
 
-      // ── 1. Matikan sidebar bawaan Discourse ──────────────────────────────
-      // Discourse mengelola sidebar lewat body classes dan inline styles.
-      // Fungsi ini memastikan tidak ada konflik layout dengan sidebar kustom kita.
+      // Strip the layout classes/styles Discourse injects for its own sidebar.
+      // ✅ ONLY called on non-admin routes — admin routes need these classes intact.
       const killDiscourseSidebar = () => {
+        if (isAdminRoute()) return; // ← guard: leave admin layout alone
+
         document.body.classList.remove(
           "has-sidebar-page",
           "sidebar-animate",
-          "sidebar--visible"
+          "sidebar--visible",
         );
-        // Bersihkan margin/padding yang mungkin di-inject Discourse
         const wrap = document.querySelector(".wrap");
         if (wrap) {
           wrap.style.removeProperty("padding-left");
@@ -27,22 +34,30 @@ export default {
         }
       };
 
-      // ── 2. Sync state collapsed sidebar → body class ─────────────────────
-      // MutationObserver memantau class di .gs-sidebar dan mengupdate
-      // body.gs-collapsed secara reaktif, sehingga CSS padding-left body
-      // ikut berubah saat sidebar di-collapse/expand.
+      // Sync .gs-collapsed on <body> to match the Glimmer component's collapsed state.
+      // ✅ Also guarded — no observer needed on admin pages.
       let sidebarObserver = null;
 
       const syncCollapseState = () => {
+        if (isAdminRoute()) {
+          // Clean up any lingering observer and body class when entering admin
+          if (sidebarObserver) {
+            sidebarObserver.disconnect();
+            sidebarObserver = null;
+          }
+          document.body.classList.remove("gs-collapsed");
+          return;
+        }
+
         const sidebar = document.querySelector(".gs-sidebar");
         if (!sidebar) return;
 
-        if (sidebarObserver) {
-          sidebarObserver.disconnect();
-        }
+        if (sidebarObserver) sidebarObserver.disconnect();
 
         sidebarObserver = new MutationObserver(() => {
-          const isCollapsed = sidebar.classList.contains("gs-sidebar--collapsed");
+          const isCollapsed = sidebar.classList.contains(
+            "gs-sidebar--collapsed",
+          );
           document.body.classList.toggle("gs-collapsed", isCollapsed);
           killDiscourseSidebar();
         });
@@ -52,12 +67,11 @@ export default {
           attributeFilter: ["class"],
         });
 
-        // Set state awal
         const isCollapsed = sidebar.classList.contains("gs-sidebar--collapsed");
         document.body.classList.toggle("gs-collapsed", isCollapsed);
       };
 
-      // ── 3. Jalankan setiap kali route berubah (Ember router) ──────────────
+      // ── Run on every Ember route transition ──
       api.onPageChange(() => {
         requestAnimationFrame(() => {
           killDiscourseSidebar();
@@ -65,7 +79,7 @@ export default {
         });
       });
 
-      // ── 4. Jalankan sekali saat pertama load ─────────────────────────────
+      // ── Run once on first load ──
       requestAnimationFrame(() => {
         killDiscourseSidebar();
         syncCollapseState();
