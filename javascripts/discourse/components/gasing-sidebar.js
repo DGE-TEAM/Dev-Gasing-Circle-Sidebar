@@ -3,6 +3,10 @@ import { tracked } from "@glimmer/tracking";
 import { service } from "@ember/service";
 import { action } from "@ember/object";
 
+// ============================================================
+// NAV ITEMS — edit bagian ini untuk mengubah menu sidebar
+// Setiap item bisa punya "children" untuk membuat sub-menu
+// ============================================================
 const NAV_ITEMS = [
   {
     id: "home",
@@ -80,11 +84,17 @@ const NAV_ITEMS = [
   },
 ];
 
+// ============================================================
+// URL logo — Discourse theme upload menghasilkan URL seperti ini.
+// Setelah upload gc-logo.jpeg via Customize > Theme > Assets,
+// ganti nilai GC_LOGO_URL dengan URL yang diberikan Discourse.
+// Contoh: "/uploads/default/original/1X/abc123.jpeg"
+// Jika dikosongkan (""), sidebar akan fallback ke teks "GC".
+// ============================================================
 const GC_LOGO_URL = "";
 
 export default class GasingSidebar extends Component {
   @service currentUser;
-  // ✅ NEW: inject Ember's router service so we can read currentRouteName reactively
   @service router;
 
   @tracked collapsed = false;
@@ -92,6 +102,7 @@ export default class GasingSidebar extends Component {
 
   constructor() {
     super(...arguments);
+    // Buka group yang anaknya cocok dengan URL saat ini
     const path = window.location.pathname;
     NAV_ITEMS.forEach((item) => {
       if (item.children) {
@@ -103,12 +114,11 @@ export default class GasingSidebar extends Component {
     });
   }
 
-  // ✅ NEW: returns true when the user is anywhere inside /admin
-  // router.currentRouteName is a tracked property — Glimmer will
-  // automatically re-render the template whenever the route changes.
+  // Returns true when the current Ember route is any admin route.
+  // router.currentRouteName is tracked by Ember's router service, so this
+  // getter is automatically reactive — the template re-evaluates on navigation.
   get isAdminRoute() {
-    const routeName = this.router.currentRouteName || "";
-    return routeName.startsWith("admin");
+    return this.router.currentRouteName?.startsWith("admin") ?? false;
   }
 
   get navItems() {
