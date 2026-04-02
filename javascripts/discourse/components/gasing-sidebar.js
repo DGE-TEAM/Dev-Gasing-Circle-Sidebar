@@ -177,7 +177,10 @@ export default class GasingSidebar extends Component {
   @action
   isActive(href) {
     if (!href) return false;
-    const path = window.location.pathname;
+    // Use router.currentURL (a tracked Glimmer property) instead of
+    // window.location.pathname so Glimmer re-evaluates this on every
+    // SPA navigation and the active highlight updates correctly.
+    const path = this.router.currentURL?.split("?")[0] ?? "";
     return href === "/" ? path === "/" : path.startsWith(href);
   }
 }
