@@ -240,6 +240,73 @@ body.has-sidebar-page #main-outlet-wrapper,
   transform: rotate(180deg);
 }
 
+/* ─── Group item row: link (kiri) + chevron btn (kanan) ─────────────────── */
+
+/* Container baris — flex horizontal, tidak ada background sendiri */
+.gs-nav-item__row {
+  display: flex;
+  align-items: stretch;
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+/* Link navigasi utama — tumbuh mengisi sisa ruang */
+.gs-nav-item--group-link {
+  flex: 1;
+  width: auto;       /* override width: 100% dari .gs-nav-item */
+  min-width: 0;
+  margin-bottom: 0;  /* spacing ditangani .gs-nav-item__row */
+  border-radius: 8px 0 0 8px;
+}
+
+/* Active state: sudut kiri tetap rounded, kanan disambung chevron */
+.gs-nav-item__row .gs-nav-item--active {
+  border-radius: 8px 0 0 8px;
+}
+
+/* Tombol khusus chevron — hanya toggle dropdown */
+.gs-nav-item__chevron-btn {
+  flex-shrink: 0;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-left: 1px solid transparent;
+  cursor: pointer;
+  color: var(--gs-text-muted);
+  border-radius: 0 8px 8px 0;
+  padding: 0;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+/* Hover effect chevron — highlight biru tersendiri */
+.gs-nav-item__chevron-btn:hover {
+  background: var(--gs-blue-light);
+  color: var(--gs-blue);
+  border-left-color: var(--gs-border);
+}
+
+/* SVG chevron berotasi saat dropdown terbuka */
+.gs-nav-item__chevron-btn svg {
+  transition: transform var(--gs-transition);
+  display: block;
+}
+
+.gs-nav-item__row--open .gs-nav-item__chevron-btn svg {
+  transform: rotate(180deg);
+}
+
+/* Collapsed: group-link kembali full width karena chevron disembunyikan */
+.gs-sidebar--collapsed .gs-nav-item--group-link {
+  width: 100%;
+  border-radius: 8px;
+}
+
 /* ─── Children / sub-items ───────────────────────────────────────────────── */
 .gs-nav-group {
   margin-bottom: 2px;

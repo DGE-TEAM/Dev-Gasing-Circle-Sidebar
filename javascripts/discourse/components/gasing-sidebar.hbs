@@ -60,18 +60,31 @@
 
       {{#if item.children}}
         {{! Item dengan sub-menu / dropdown }}
+        {{! Baris utama dibagi dua: link navigasi (kiri) + tombol chevron saja (kanan) }}
         <div class="gs-nav-group">
-          <button
-            class="gs-nav-item gs-nav-item--group
-              {{if (this.isGroupOpen item.id) 'gs-nav-item--open'}}"
-            type="button"
-            title={{if this.collapsed item.label ""}}
-            {{on "click" (fn this.toggleGroup item.id)}}
-          >
-            <span class="gs-nav-item__icon">{{{item.icon}}}</span>
+          <div class="gs-nav-item__row {{if (this.isGroupOpen item.id) 'gs-nav-item__row--open'}}">
+
+            {{! Klik area ini → navigasi ke item.href }}
+            <a
+              href={{item.href}}
+              class="gs-nav-item gs-nav-item--group-link
+                {{if (this.isActive item.href) 'gs-nav-item--active'}}"
+              title={{if this.collapsed item.label ""}}
+            >
+              <span class="gs-nav-item__icon">{{{item.icon}}}</span>
+              {{#unless this.collapsed}}
+                <span class="gs-nav-item__label">{{item.label}}</span>
+              {{/unless}}
+            </a>
+
+            {{! Klik chevron ini → toggle dropdown sub-kategori }}
             {{#unless this.collapsed}}
-              <span class="gs-nav-item__label">{{item.label}}</span>
-              <span class="gs-nav-item__chevron">
+              <button
+                class="gs-nav-item__chevron-btn"
+                type="button"
+                aria-label={{if (this.isGroupOpen item.id) "Tutup submenu" "Buka submenu"}}
+                {{on "click" (fn this.toggleGroup item.id)}}
+              >
                 <svg
                   width="14"
                   height="14"
@@ -80,9 +93,10 @@
                   stroke="currentColor"
                   stroke-width="2.5"
                 ><polyline points="6 9 12 15 18 9" /></svg>
-              </span>
+              </button>
             {{/unless}}
-          </button>
+
+          </div>
 
           {{#unless this.collapsed}}
             {{#if (this.isGroupOpen item.id)}}
