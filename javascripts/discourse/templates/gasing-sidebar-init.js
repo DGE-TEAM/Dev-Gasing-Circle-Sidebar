@@ -102,10 +102,10 @@ export default {
               return "discovery.latest";
             }
             get title() {
-              return "Virtual Meet-Up";
+              return "Virtual Meetup";
             }
             get text() {
-              return "Virtual Meet-Up";
+              return "Virtual Meetup";
             }
             get prefixType() {
               return "icon";

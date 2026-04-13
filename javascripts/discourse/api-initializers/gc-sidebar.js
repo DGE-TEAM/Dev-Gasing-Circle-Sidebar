@@ -22,7 +22,7 @@ export default {
             text: "Konten Eksklusif",
             icon: "file-alt",
           });
-          // Tambahkan link lainnya di sini (Komunitas, Virtual Meet-Up, dll)
+          // Tambahkan link lainnya di sini (Komunitas, Virtual Meetup, dll)
         },
         "gc-main-menu",
         { title: "", icon: "" },
