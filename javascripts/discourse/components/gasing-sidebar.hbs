@@ -60,7 +60,6 @@
 
       {{#if item.children}}
         {{! Item dengan sub-menu / dropdown }}
-        {{! Baris utama dibagi dua: link navigasi (kiri) + tombol chevron saja (kanan) }}
         <div class="gs-nav-group">
           <div class="gs-nav-item__row {{if (this.isGroupOpen item.id) 'gs-nav-item__row--open'}}">
 
@@ -71,7 +70,20 @@
                 {{if (this.isActive item.href) 'gs-nav-item--active'}}"
               title={{if this.collapsed item.label ""}}
             >
-              <span class="gs-nav-item__icon">{{{item.icon}}}</span>
+              <span class="gs-nav-item__icon">
+                {{! Jika admin upload gambar, tampilkan <img>. Jika tidak, pakai SVG fallback. }}
+                {{#if item.iconUrl}}
+                  <img
+                    src={{item.iconUrl}}
+                    alt=""
+                    class="gs-nav-item__icon-img"
+                    width="20"
+                    height="20"
+                  />
+                {{else}}
+                  {{{item.iconSvg}}}
+                {{/if}}
+              </span>
               {{#unless this.collapsed}}
                 <span class="gs-nav-item__label">{{item.label}}</span>
               {{/unless}}
@@ -126,7 +138,20 @@
             {{if (this.isActive item.href) 'gs-nav-item--active'}}"
           title={{if this.collapsed item.label ""}}
         >
-          <span class="gs-nav-item__icon">{{{item.icon}}}</span>
+          <span class="gs-nav-item__icon">
+            {{! Jika admin upload gambar, tampilkan <img>. Jika tidak, pakai SVG fallback. }}
+            {{#if item.iconUrl}}
+              <img
+                src={{item.iconUrl}}
+                alt=""
+                class="gs-nav-item__icon-img"
+                width="20"
+                height="20"
+              />
+            {{else}}
+              {{{item.iconSvg}}}
+            {{/if}}
+          </span>
           {{#unless this.collapsed}}
             <span class="gs-nav-item__label">{{item.label}}</span>
           {{/unless}}

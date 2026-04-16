@@ -1,0 +1,48 @@
+# ============================================================
+# DGE-GC SIDEBAR — Theme Component Settings
+# Admin bisa mengupload gambar icon PNG untuk tiap menu.
+# Rekomendasi ukuran gambar: 32x32px atau 64x64px, format PNG transparan.
+# Jika tidak diupload, sidebar akan menggunakan icon SVG bawaan.
+# ============================================================
+
+# ----------------------------------------------------------
+# LOGO
+# ----------------------------------------------------------
+gs_logo_url:
+  default: ""
+  type: string
+  description: "URL gambar logo sidebar. Kosongkan untuk fallback ke teks \"GC\"."
+
+# ----------------------------------------------------------
+# ICON NAV ITEMS — Upload gambar PNG (rekomendasi 32x32px)
+# Kosongkan untuk menggunakan icon SVG bawaan.
+# ----------------------------------------------------------
+gs_icon_home:
+  default: ""
+  type: upload
+  description: "Icon menu Home — upload PNG (32x32px). Kosongkan untuk pakai icon default."
+
+gs_icon_news:
+  default: ""
+  type: upload
+  description: "Icon menu Gasing Academy News — upload PNG (32x32px). Kosongkan untuk pakai icon default."
+
+gs_icon_komunitas:
+  default: ""
+  type: upload
+  description: "Icon menu Komunitas — upload PNG (32x32px). Kosongkan untuk pakai icon default."
+
+gs_icon_konten:
+  default: ""
+  type: upload
+  description: "Icon menu Konten Eksklusif — upload PNG (32x32px). Kosongkan untuk pakai icon default."
+
+gs_icon_meetup:
+  default: ""
+  type: upload
+  description: "Icon menu Virtual Meetup — upload PNG (32x32px). Kosongkan untuk pakai icon default."
+
+gs_icon_materi:
+  default: ""
+  type: upload
+  description: "Icon menu Materi Gasing — upload PNG (32x32px). Kosongkan untuk pakai icon default."

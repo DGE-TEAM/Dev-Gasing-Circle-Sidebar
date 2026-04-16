@@ -216,6 +216,31 @@ body.has-sidebar-page #main-outlet-wrapper,
   justify-content: center;
   flex-shrink: 0;
   color: var(--gs-text-muted);
+
+  /* Icon Discourse (d-icon) — pastikan ukuran seragam dengan SVG inline */
+  svg.d-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* Icon gambar yang diupload admin — kunci ukuran & proporsi */
+  .gs-nav-item__icon-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 2px;
+    display: block;
+    /* Opacity lebih rendah saat tidak aktif, supaya mengikuti nuansa muted */
+    opacity: 0.65;
+    transition: opacity 0.15s;
+  }
+}
+
+.gs-nav-item--active .gs-nav-item__icon .gs-nav-item__icon-img,
+.gs-nav-item:hover .gs-nav-item__icon .gs-nav-item__icon-img {
+  opacity: 1;
 }
 
 .gs-nav-item--active .gs-nav-item__icon {
